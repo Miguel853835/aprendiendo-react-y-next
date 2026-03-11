@@ -28,7 +28,7 @@ function App() {
 
   
   const updateBoard = (index) =>{
-    // Si la casilla tiene algo o hay ganador, no se puede juagr
+    // Si la casilla tiene algo o hay ganador, no se puede jugar
     if(board[index] || winner) return
     // copia del tablero (NO SE MODIFICA EL ORIGINAL)
     const newBoard = [...board]
