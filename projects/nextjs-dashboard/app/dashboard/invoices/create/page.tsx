@@ -7,11 +7,11 @@ export const metadata: Metadata = {
     title: 'Create Invoices',
 }
 export default async function Page() {
-  const customers = await fetchCustomers();
+  const customers = await fetchCustomers(); // coge los datos de los clientes
  
   return (
     <main>
-      <Breadcrumbs
+      <Breadcrumbs  // sirve para mostrar el camino que sigue el usuario  (en este caso 'Invoices/Create Invoices') 
         breadcrumbs={[
           { label: 'Invoices', href: '/dashboard/invoices' },
           {
@@ -20,7 +20,7 @@ export default async function Page() {
             active: true,
           },
         ]}
-      />
+      /> 
       <Form customers={customers} />
     </main>
   );

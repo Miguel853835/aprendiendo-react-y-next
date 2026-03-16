@@ -1,5 +1,5 @@
-import Link from 'next/link';
-import { FaceFrownIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link'; // importa Link, sirve para precargar la página a la que se dirige el usuario y evitar recargas completas
+import { FaceFrownIcon } from '@heroicons/react/24/outline'; // importa el FaceFrown (cara triste)
 
 export default function notFound(){
     return(

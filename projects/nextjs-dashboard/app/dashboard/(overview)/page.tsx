@@ -10,12 +10,15 @@ import { RevenueChartSkeleton , LatestInvoicesSkeleton , CardsSkeleton} from '@/
 import CardWrapper from '@/app/ui/dashboard/cards';
 import { Metadata } from 'next';
 
+// metadata para el título de la página
 export const metadata: Metadata = {
     title: 'Dashboard',
 }
 export default async function Page() {
     /* const revenue = await fetchRevenue();
     const latestInvoices = await fetchLatestInvoices(); */
+
+    // fetch de los datos para las tarjetas del dashboard
     const { totalPaidInvoices, totalPendingInvoices, numberOfInvoices, numberOfCustomers }   = await fetchCardData();
 
   return (

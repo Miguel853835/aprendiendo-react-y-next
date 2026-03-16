@@ -13,14 +13,20 @@ export const metadata: Metadata = {
 }
 
 export default async function Page(props: {
+    // recibe como prop el searchParams que tiene la búsqueda (query) y la página (page)
     searchParams?: Promise<{
         query?: string;
         page?: string;
     }>;
 }) {
+
+    // searchParams coge los filtros de la URL
     const searchParams = await props.searchParams;
+    // coge la búsqueda (si no hay la pone vacía)
     const query = searchParams?.query || '';
+    // coge la página actual (por defecto en 1)
     const currentPage = Number(searchParams?.page) || 1;
+    // coge el total de páginas llamando a la funcion que cuenta los resultados y saca el total de página en las que se distribuyen
     const totalPages = await fetchInvoicesPages(query);
     
     return (
@@ -32,6 +38,7 @@ export default async function Page(props: {
                 <Search placeholder="Search invoices..." />
                 <CreateInvoice />
             </div>
+            {/* cada vez que el usuario hace una búsqueda se muestra el skeleton mientras carga */}
               <Suspense key={query + currentPage} fallback={<InvoicesTableSkeleton />}>
                 <Table query={query} currentPage={currentPage} />
             </Suspense>
