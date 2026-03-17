@@ -19,7 +19,7 @@ export default function Error({
             <button 
                 className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-400"
                 onClick={
-                    ()=> reset()  // al pulsar el boton se lanza el reset
+                    ()=> reset()  // al pulsar el botón se lanza el reset
                 }
             >
                 Try again

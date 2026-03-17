@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 // Exporta la página de edición; recibe 'params' como una Promesa que contiene el 'id' dinámico de la URL.
 export default async function Page(props: {params: Promise<{id: string}>}){
-    // coge el id de la URL
+    // coge el id de la url
     const params = await props.params;
     const id = params.id;
 

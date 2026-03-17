@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Page(props: {
-    // recibe como prop el searchParams que tiene la búsqueda (query) y la página (page)
+    // recibe como prop el searchParams que tiene la búsqueda (query) y la pagina (page) 
     searchParams?: Promise<{
         query?: string;
         page?: string;
