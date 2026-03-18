@@ -2,6 +2,24 @@
 // It describes the shape of the data, and what data type each property should accept.
 // For simplicity of teaching, we're manually defining these types.
 // However, these types are generated automatically if you're using an ORM such as Prisma.
+import { z } from 'zod';
+
+const FormSchema = z.object({
+    id: z.string(),
+    customerId : z.string({
+        invalid_type_error: 'Please select a customer', // da un error si no seleccionas un cliente
+    }),
+    amount: z.coerce.number().gt(0, 'Please enter an amount greater than $0'), // da un error si pones una cantidad menor o igual que 0
+    status: z.enum(['pending', 'paid'],{
+        invalid_type_error: 'Please select an invoice status', // da un error si no seleccionas ninguno de los dos estados
+    }),
+    date: z.string()
+})
+
+// Schema para actualizar y crear (en ambos se omite id y fecha porque no lo gestiona el usuario)
+export const UpdateInvoice = FormSchema.omit({ id: true, date: true});
+export const CreateInvoice = FormSchema.omit({id: true, date:true});
+
 export type User = {
   id: string;
   name: string;

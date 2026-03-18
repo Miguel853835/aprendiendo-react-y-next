@@ -8,20 +8,60 @@ import {
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from '@/app/ui/button';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { authenticate } from '@/app/lib/actions';
 import { useSearchParams } from 'next/navigation';
- 
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+
+// esquema de validacion para el login
+const LoginSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(6,'Password must be at least 6 characters')
+}) 
+
+type LoginValues = z.infer<typeof LoginSchema>;
+
 export default function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
-  const [errorMessage, formAction, isPending] = useActionState(
-    authenticate,
-    undefined,
-  );
- 
+  //const [errorMessage, formAction, isPending] = useActionState(authenticate,undefined,); 
+  const [serverError, setServerError] = useState<string | null>(null)
+
+  const{
+    register,
+    handleSubmit,
+    formState: {errors, isSubmitting},
+  } = useForm<LoginValues>({
+    resolver: zodResolver(LoginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  })
+
+  const onSubmit = async (data: LoginValues) => {
+    setServerError(null);
+    const formData = new FormData();
+    formData.append('email', data.email);
+    formData.append('password', data.password);
+    formData.append('redirectTo', callbackUrl);
+
+    try{
+      // se pasa undefined porque authenticate espera (prevState y formData)
+      const result = await authenticate(undefined, formData)
+      if (result){
+        setServerError(result);
+      }
+    }
+    catch (error){
+      setServerError('Something went wrong. Please try again.')
+    }
+  };
+
   return (
-    <form action={formAction} className="space-y-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Please log in to continue.
@@ -38,13 +78,17 @@ export default function LoginForm() {
               <input
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="email"
-                type="email"
-                name="email"
+                {...register('email')}
+                //type="email"
+                //name="email"
                 placeholder="Enter your email address"
-                required
+                //required
               />
               <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
+            {errors.email && (
+              <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+            )}
           </div>
           <div className="mt-4">
             <label
@@ -57,29 +101,34 @@ export default function LoginForm() {
               <input
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="password"
+                {...register('password')}
                 type="password"
-                name="password"
+                //name="password"
                 placeholder="Enter password"
-                required
-                minLength={6}
+                //required
+                //minLength={6}
               />
               <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>
+            )}
           </div>
         </div>
-        <input type="hidden" name="redirectTo" value={callbackUrl} />
-        <Button className="mt-4 w-full" aria-disabled={isPending}>
-          Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        {/* <input type="hidden" name="redirectTo" value={callbackUrl} /> */}
+        <Button className="mt-4 w-full" aria-disabled={isSubmitting}>
+          {isSubmitting ? 'Loggin in...' : 'Log in'}
+          <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
         <div
           className="flex h-8 items-end space-x-1"
           aria-live="polite"
           aria-atomic="true"
         >
-          {errorMessage && (
+          {serverError && (
             <>
               <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
-              <p className="text-sm text-red-500">{errorMessage}</p>
+              <p className="text-sm text-red-500">{serverError}</p>
             </>
           )}
         </div>

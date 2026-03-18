@@ -1,6 +1,6 @@
 'use server';
-import { z } from 'zod'
-import postgres from 'postgres'
+import { z } from 'zod';
+import { CreateInvoice, UpdateInvoice } from './definitions';import postgres from 'postgres'
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
@@ -10,21 +10,7 @@ import { AuthError } from 'next-auth';
 const sql = postgres(process.env.POSTGRES_URL!, {ssl: 'require'});
 
 // el Schema define la estructura válida del formulario (el id y la fecha se hacen automáticamente por lo que no salta un error)
-const FormSchema = z.object({
-    id: z.string(),
-    customerId : z.string({
-        invalid_type_error: 'Please select a customer', // da un error si no seleccionas un cliente
-    }),
-    amount: z.coerce.number().gt(0, 'Please enter an amount greater than $0'), // da un error si pones una cantidad menor o igual que 0
-    status: z.enum(['pending', 'paid'],{
-        invalid_type_error: 'Please select an invoice status', // da un error si no seleccionas ninguno de los dos estados
-    }),
-    date: z.string()
-})
 
-// Schema para actualizar y crear (en ambos se omite id y fecha porque no lo gestiona el usuario)
-const UpdateInvoice = FormSchema.omit({ id: true, date: true});
-const CreateInvoice = FormSchema.omit({id: true, date:true});
 
 // define como es la respuesta que recibe el usuario
 export type State = {
